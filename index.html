@@ -15,21 +15,18 @@
     --ink-soft: #7a6d62;
     --paper: #ffffff;
     --line: #eee3d3;
-    --shadow: 0 1px 0 rgba(43,36,32,.04), 0 10px 30px -12px rgba(80,55,30,.25);
-    --accent: #e8573f;
-    --teamL: #3b74d9;
-    --teamR: #e8862a;
-    --radius: 22px;
+    --shadow: 0 1px 0 rgba(43,36,32,.04), 0 14px 36px -14px rgba(80,55,30,.28);
+    --c: #e8573f;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #1b1816; --bg-dot: #2c2724; --ink: #f4ece2; --ink-soft: #a99a8c;
-      --paper: #26211e; --line: #3a332e; --shadow: 0 10px 30px -12px rgba(0,0,0,.6); color-scheme: dark;
+      --paper: #26211e; --line: #3a332e; --shadow: 0 14px 36px -14px rgba(0,0,0,.6); color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --bg: #1b1816; --bg-dot: #2c2724; --ink: #f4ece2; --ink-soft: #a99a8c;
-    --paper: #26211e; --line: #3a332e; --shadow: 0 10px 30px -12px rgba(0,0,0,.6); color-scheme: dark;
+    --paper: #26211e; --line: #3a332e; --shadow: 0 14px 36px -14px rgba(0,0,0,.6); color-scheme: dark;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -43,501 +40,249 @@
     min-height: 100dvh;
   }
   button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
+
   .wrap {
-    max-width: 980px; margin: 0 auto; padding-block: 28px 48px;
+    max-width: 620px; margin: 0 auto; padding-block: 24px 40px;
     padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; flex-direction: column; gap: 20px; min-height: 100dvh;
   }
 
   /* ---------- Header ---------- */
-  header.top { text-align: center; margin: 8px 0 28px; }
-  .logo {
-    display: inline-flex; gap: 6px; margin-bottom: 14px;
-  }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { display: inline-flex; gap: 4px; }
   .logo span {
-    width: 44px; height: 44px; display: grid; place-items: center;
-    border-radius: 12px; font-weight: 900; font-size: 22px; color: #fff;
-    box-shadow: 0 4px 0 rgba(0,0,0,.12);
-    transform: rotate(var(--r));
+    width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px;
+    font-weight: 900; font-size: 15px; color: #fff; transform: rotate(var(--r));
+    box-shadow: 0 3px 0 rgba(0,0,0,.12);
   }
-  h1 { font-size: clamp(28px, 6vw, 42px); font-weight: 900; margin: 0; letter-spacing: .04em; }
-  .sub { color: var(--ink-soft); margin: 8px 0 0; font-size: 15px; }
-
-  /* ---------- Mode switch ---------- */
-  .mode {
-    display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 0 0 28px;
-  }
-  .mode-label { font-size: 13px; color: var(--ink-soft); letter-spacing: .1em; }
-  .seg {
-    display: inline-flex; background: var(--paper); border: 1px solid var(--line);
-    border-radius: 999px; padding: 5px; box-shadow: var(--shadow); position: relative;
-  }
-  .seg button {
-    border: 0; background: transparent; padding: 10px 18px; border-radius: 999px;
-    font-weight: 700; font-size: 15px; color: var(--ink-soft); position: relative; z-index: 1;
-    transition: color .2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
-  }
-  .seg button small { font-weight: 500; font-size: 12px; opacity: .8; }
-  .seg button.on { color: #fff; }
-  .seg .pill {
-    position: absolute; top: 5px; bottom: 5px; border-radius: 999px; background: var(--ink);
-    transition: left .3s cubic-bezier(.3,1.4,.5,1), width .3s cubic-bezier(.3,1.4,.5,1);
-  }
-  :root[data-theme="dark"] .seg button.on { color: var(--bg); }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg button.on { color: var(--bg); } }
-
-  /* ---------- Theme grid ---------- */
-  .grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px;
-  }
-  .theme {
-    border: 0; text-align: left; background: var(--paper); border-radius: var(--radius);
-    padding: 18px; box-shadow: var(--shadow); position: relative; overflow: hidden;
-    border: 1px solid var(--line);
-    transition: transform .2s cubic-bezier(.3,1.4,.5,1), box-shadow .2s;
-    animation: pop .5s cubic-bezier(.3,1.4,.5,1) both;
-    animation-delay: calc(var(--i) * 40ms);
-  }
-  .theme::before {
-    content: ""; position: absolute; right: -30px; top: -30px; width: 110px; height: 110px;
-    border-radius: 50%; background: var(--c); opacity: .16; transition: transform .3s;
-  }
-  .theme:hover { transform: translateY(-4px); }
-  .theme:hover::before { transform: scale(1.3); }
-  .theme:active { transform: scale(.97); }
-  .theme .emo { font-size: 34px; display: block; margin-bottom: 18px; position: relative; }
-  .theme .name { font-weight: 900; font-size: 19px; display: block; }
-  .theme .meta { font-size: 13px; color: var(--ink-soft); margin-top: 4px; display: flex; justify-content: space-between; align-items: center;}
-  .theme .meta i { font-style: normal; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; font-size: 14px; }
-  .theme .best { font-size: 12px; color: var(--c); font-weight: 700; }
-  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.96); } }
-
-  footer { text-align: center; color: var(--ink-soft); font-size: 13px; margin-top: 36px; }
-  kbd { font-family: inherit; font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; background: var(--paper); }
-
-  /* ---------- Game ---------- */
-  #game { display: none; }
-  body.playing #home { display: none; }
-  body.playing #game { display: block; }
-
-  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  h1 { font-size: 22px; font-weight: 900; margin: 0; letter-spacing: .06em; }
   .icon-btn {
     width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--paper);
     display: grid; place-items: center; box-shadow: var(--shadow); flex: none;
   }
   .icon-btn svg { width: 20px; height: 20px; }
-  .g-title { text-align: center; flex: 1; min-width: 0; }
-  .g-title b { font-size: clamp(26px, 7vw, 38px); font-weight: 900; display: block; line-height: 1.2; letter-spacing: .04em; }
-  .g-title span { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
 
-  /* ---------- Scoreboard ---------- */
-  .score { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: stretch; margin-bottom: 16px; }
-  .team {
-    background: var(--paper); border: 2px solid var(--line); border-radius: 20px; padding: 10px 16px;
-    display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: var(--shadow);
-    transition: border-color .3s, background .3s; min-width: 0;
-  }
-  .team.R { flex-direction: row-reverse; }
-  .team .nm {
-    font-weight: 700; font-size: 16px; outline: none; border-radius: 8px; padding: 2px 6px; margin: -2px -6px;
-    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: text;
-  }
-  .team .nm:focus { background: var(--bg); box-shadow: 0 0 0 2px var(--t); }
-  .team .pts { font-weight: 900; font-size: clamp(32px, 8vw, 44px); color: var(--t); line-height: 1; font-variant-numeric: tabular-nums; }
-  .team.lead { border-color: var(--t); background: color-mix(in srgb, var(--t) 8%, var(--paper)); }
-  .team.bump .pts { animation: bump .5s cubic-bezier(.3,1.8,.5,1); }
-  @keyframes bump { 40% { transform: scale(1.45); } }
-  .L { --t: var(--teamL); } .R { --t: var(--teamR); }
-  .vs { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--ink-soft); line-height: 1.3; }
-  .vs b { font-size: 20px; color: var(--ink); font-weight: 900; font-variant-numeric: tabular-nums; }
+  /* ---------- Progress ---------- */
+  .count { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--ink-soft); }
+  .count b { color: var(--ink); font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .bar { flex: 1; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar div { height: 100%; background: var(--c); border-radius: 99px; transition: width .4s cubic-bezier(.3,1.2,.5,1), background .4s; }
 
-  .progress { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
-  .progress div { height: 100%; width: 0; background: var(--c); border-radius: 99px; transition: width .4s cubic-bezier(.3,1.2,.5,1); }
-  .stats { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-soft); margin-bottom: 22px; }
-  .stats b { color: var(--ink); }
-
-  .stage { perspective: 1400px; max-width: 560px; margin: 0 auto; }
+  /* ---------- Card ---------- */
   .card {
-    position: relative; width: 100%; aspect-ratio: 4 / 3.3; cursor: pointer;
-    transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,1.25,.45,1);
-    outline: none;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 32px; box-shadow: var(--shadow);
+    padding: 40px 20px 28px; display: flex; flex-direction: column; align-items: center; gap: 28px;
+    position: relative; overflow: hidden;
   }
-  .card.flipped { transform: rotateY(180deg); }
-  .card.enter { animation: enter .45s cubic-bezier(.3,1.3,.5,1); }
-  @keyframes enter { from { opacity: 0; translate: 40px 0; rotate: 3deg; } }
-  .face {
-    position: absolute; inset: 0; border-radius: 28px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px;
-    box-shadow: var(--shadow); overflow: hidden;
+  .card::before {
+    content: ""; position: absolute; width: 260px; height: 260px; border-radius: 50%;
+    background: var(--c); opacity: .09; right: -90px; top: -110px; transition: background .4s;
   }
-  .front { background: var(--paper); border: 1px solid var(--line); }
-  .front::after {
-    content: ""; position: absolute; inset: 12px; border-radius: 20px; border: 2px dashed var(--line); pointer-events: none;
-  }
-  .back { background: var(--c); color: #fff; transform: rotateY(180deg); }
-  .back::before {
-    content: ""; position: absolute; width: 140%; aspect-ratio: 1; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,.18), transparent 60%); top: -70%; left: -20%;
-  }
-  .qno { position: absolute; top: 24px; left: 28px; font-weight: 900; font-size: 14px; color: var(--c); letter-spacing: .1em; }
-  .hint-tag { position: absolute; top: 24px; right: 28px; font-size: 12px; color: var(--ink-soft); background: var(--bg); padding: 4px 10px; border-radius: 99px; }
+  .card.enter .tiles { animation: enter .45s cubic-bezier(.3,1.3,.5,1); }
+  @keyframes enter { from { opacity: 0; transform: translateX(var(--dx, 30px)) rotate(2deg); } }
 
-  .tiles { display: flex; gap: clamp(6px, 2vw, 12px); flex-wrap: wrap; justify-content: center; }
+  .tiles { display: flex; gap: clamp(14px, 5vw, 26px); position: relative; }
   .tile {
-    width: var(--ts); height: calc(var(--ts) * 1.12); border-radius: 16px; display: grid; place-items: center;
-    font-weight: 700; font-size: calc(var(--ts) * .55); background: var(--bg); border: 2px solid var(--line);
-    animation: tile .4s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--i) * 60ms);
+    width: clamp(118px, 34vw, 170px); aspect-ratio: 1 / 1.1; border-radius: 28px;
+    display: grid; place-items: center; font-weight: 700; font-size: clamp(64px, 19vw, 96px); line-height: 1;
+    color: var(--c); border: 3px solid var(--c);
+    background: color-mix(in srgb, var(--c) 10%, var(--paper));
+    box-shadow: 0 6px 0 color-mix(in srgb, var(--c) 35%, transparent);
+    transition: color .4s, border-color .4s, background .4s;
   }
-  .tile.on { background: color-mix(in srgb, var(--c) 14%, var(--paper)); border-color: var(--c); color: var(--c); }
-  .tile.blank { color: var(--ink-soft); opacity: .45; border-style: dashed; font-size: calc(var(--ts) * .4); }
-  @keyframes tile { from { opacity: 0; transform: translateY(10px) scale(.8); } }
-  .tap { position: absolute; bottom: 24px; font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
-  .tap svg { width: 16px; height: 16px; }
+  .tile:nth-child(1) { transform: rotate(-3deg); }
+  .tile:nth-child(2) { transform: rotate(2.5deg); }
 
-  .answer { font-size: clamp(40px, 11vw, 76px); font-weight: 900; letter-spacing: .08em; position: relative; text-align: center; line-height: 1.15; }
-  .answer ruby { ruby-position: over; }
-  .answer rt { font-size: .26em; font-weight: 700; opacity: .85; letter-spacing: 0; }
-  .back .lbl { font-size: 13px; letter-spacing: .3em; opacity: .85; margin-bottom: 12px; position: relative; }
+  .reveal { display: flex; flex-direction: column; align-items: center; gap: 12px; min-height: 120px; justify-content: center; position: relative; width: 100%; }
+  .peek {
+    border: 1.5px dashed var(--line); background: transparent; border-radius: 999px;
+    padding: 9px 18px; font-size: 14px; font-weight: 700; color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: 6px; transition: background .2s, color .2s, border-color .2s;
+  }
+  .peek:hover { background: var(--bg); color: var(--ink); border-color: var(--ink-soft); }
+  .peek svg { width: 16px; height: 16px; }
+  .ans { display: none; flex-direction: column; align-items: center; gap: 10px; animation: pop .4s cubic-bezier(.3,1.5,.5,1); }
+  .reveal.open .ans { display: flex; }
+  .ans .main { font-size: clamp(40px, 11vw, 56px); font-weight: 900; letter-spacing: .1em; line-height: 1.1; }
+  .ans .alt { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; font-size: 14px; color: var(--ink-soft); }
+  .ans .alt span { background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 99px; color: var(--ink); }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.94); } }
 
-  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 560px; margin: 22px auto 0; }
+  /* ---------- Nav ---------- */
+  .nav { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; }
   .btn {
-    border: 0; border-radius: 18px; padding: 16px; font-weight: 900; font-size: 17px;
+    border: 0; border-radius: 18px; padding: 17px 12px; font-weight: 900; font-size: 17px;
     display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 0 rgba(0,0,0,.14);
     transition: transform .12s, box-shadow .12s, opacity .2s;
   }
   .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.14); }
-  .btn.primary { background: var(--ink); color: var(--bg); grid-column: 1 / -1; }
-  .btn.ok { background: #3fae72; color: #fff; }
-  .btn.L, .btn.R { background: var(--t); color: #fff; min-width: 0; }
-  .btn.L span, .btn.R span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .btn.no { background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+  .btn:disabled { opacity: .35; pointer-events: none; }
+  .btn.ghost { background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+  .btn.solid { background: var(--ink); color: var(--bg); }
   .btn svg { width: 20px; height: 20px; }
-  .hidden { display: none !important; }
 
-  .nav { display: flex; justify-content: center; gap: 10px; margin-top: 18px; }
-  .nav button { border: 0; background: transparent; color: var(--ink-soft); font-size: 14px; padding: 8px 12px; border-radius: 10px; }
-  .nav button:hover { background: var(--line); color: var(--ink); }
-
-  /* ---------- Result ---------- */
-  .result { max-width: 560px; margin: 0 auto; text-align: center; background: var(--paper); border: 1px solid var(--line); border-radius: 28px; padding: 32px 22px; box-shadow: var(--shadow); animation: pop .5s cubic-bezier(.3,1.4,.5,1); }
-  .ring { width: 150px; height: 150px; margin: 0 auto 16px; position: relative; }
-  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .ring circle { fill: none; stroke-width: 12; stroke-linecap: round; }
-  .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; font-size: 38px; }
-  .ring .num small { font-size: 14px; color: var(--ink-soft); display: block; font-weight: 500; }
-  .result h2 { margin: 0 0 6px; font-weight: 900; }
-  .result p { color: var(--ink-soft); margin: 0 0 20px; }
-  .miss { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 22px; }
-  .miss span { background: var(--bg); border: 1px solid var(--line); padding: 6px 12px; border-radius: 99px; font-size: 14px; }
-  .result .actions { margin-top: 0; }
-  .final { display: flex; align-items: flex-end; justify-content: center; gap: 18px; margin: 4px 0 18px; }
-  .final .side { display: flex; flex-direction: column; align-items: center; min-width: 0; flex: 1; max-width: 160px; }
-  .final .crown { font-size: 30px; height: 40px; animation: pop .6s .2s cubic-bezier(.3,1.6,.5,1) both; }
-  .final b { font-size: clamp(56px, 16vw, 84px); font-weight: 900; color: var(--t); line-height: 1; font-variant-numeric: tabular-nums; }
-  .final .side:not(.win) b { opacity: .45; }
-  .final span { font-weight: 700; margin-top: 6px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .final .colon { font-size: 48px; font-weight: 900; color: var(--ink-soft); padding-bottom: 34px; }
-
-  .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9; }
-  .confetti i { position: absolute; top: -20px; width: 10px; height: 14px; border-radius: 3px; animation: fall linear forwards; }
-  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+  footer { margin-top: auto; text-align: center; color: var(--ink-soft); font-size: 13px; }
+  kbd { font-family: inherit; font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; background: var(--paper); }
 
   @media (max-width: 520px) {
-    .wrap { padding-top: 20px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .theme { padding: 14px; }
-    .theme .emo { font-size: 28px; margin-bottom: 12px; }
-    .theme .name { font-size: 17px; }
-    .seg button { padding: 9px 13px; font-size: 14px; }
-    .seg button small { display: none; }
-    .card { aspect-ratio: 4 / 4.4; }
-    .qno { top: 20px; left: 22px; } .hint-tag { top: 18px; right: 20px; }
+    .wrap { padding-block: 16px 28px; gap: 16px; }
+    .card { padding: 32px 16px 22px; gap: 22px; border-radius: 28px; }
+    footer .kb { display: none; }
   }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <!-- ================= HOME ================= -->
-  <section id="home">
-    <header class="top">
+<main class="wrap">
+  <header>
+    <div class="brand">
       <div class="logo" aria-hidden="true">
         <span style="background:#e8573f;--r:-6deg">ㄓ</span>
-        <span style="background:#f2a93b;--r:4deg">ㄩ</span>
-        <span style="background:#3fae72;--r:-3deg">ㄧ</span>
-        <span style="background:#4a7fd6;--r:6deg">ㄣ</span>
+        <span style="background:#3fae72;--r:5deg">ㄧ</span>
       </div>
       <h1>注音猜猜看</h1>
-      <p class="sub">看注音開頭，猜出答案！選個主題開始吧</p>
-    </header>
-
-    <div class="mode">
-      <div class="mode-label">提示長度</div>
-      <div class="seg" id="seg">
-        <div class="pill"></div>
-        <button data-mode="first">單一開頭 <small>ㄆ＿</small></button>
-        <button data-mode="all">整串開頭 <small>ㄆㄍ</small></button>
-      </div>
     </div>
+    <button class="icon-btn" id="shuffle" aria-label="重新洗牌" title="重新洗牌">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+    </button>
+  </header>
 
-    <div class="grid" id="grid"></div>
-    <footer>兩人對戰：翻卡後誰先答對就按誰得分（遊戲中點名字可改名）<br>電腦可用 <kbd>空白鍵</kbd> 翻卡，翻開後 <kbd>←</kbd> 左邊得分、<kbd>→</kbd> 右邊得分</footer>
+  <div class="count"><span>第 <b id="no">1</b> / <span id="total">50</span> 題</span><div class="bar"><div id="prog"></div></div></div>
+
+  <section class="card" id="card">
+    <div class="tiles" id="tiles"></div>
+    <div class="reveal" id="reveal">
+      <button class="peek" id="peek">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span id="peekText">看參考答案</span>
+      </button>
+      <div class="ans"><div class="main" id="main"></div><div class="alt" id="alt"></div></div>
+    </div>
   </section>
 
-  <!-- ================= GAME ================= -->
-  <section id="game">
-    <div class="bar">
-      <button class="icon-btn" id="back" aria-label="回主題">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <div class="g-title"><b id="gName"></b><span id="gMode"></span></div>
-      <button class="icon-btn" id="restart" aria-label="重新洗牌">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-      </button>
-    </div>
+  <div class="nav">
+    <button class="btn ghost" id="prev">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>上一題</button>
+    <button class="btn solid" id="next">下一題
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
 
-    <div id="play">
-      <div class="score">
-        <div class="team L" id="tL"><span class="nm" id="nL" contenteditable="true" spellcheck="false" title="點一下可改名字">左邊</span><span class="pts" id="pL">0</span></div>
-        <div class="vs"><span>第</span><b id="sIdx">1</b><span>/ <span id="sTot">20</span> 題</span></div>
-        <div class="team R" id="tR"><span class="nm" id="nR" contenteditable="true" spellcheck="false" title="點一下可改名字">右邊</span><span class="pts" id="pR">0</span></div>
-      </div>
-      <div class="progress" style="margin-bottom:20px"><div id="prog"></div></div>
-
-      <div class="stage">
-        <div class="card" id="card" tabindex="0" role="button" aria-label="翻卡">
-          <div class="face front">
-            <div class="qno" id="qno"></div>
-            <div class="hint-tag" id="hintTag"></div>
-            <div class="tiles" id="tiles"></div>
-            <div class="tap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5"/></svg>點卡片翻面看答案</div>
-          </div>
-          <div class="face back">
-            <div class="lbl">答案</div>
-            <div class="answer" id="answer"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn primary" id="flipBtn">翻卡看答案</button>
-        <button class="btn L hidden" id="lBtn">◀ <span class="nmL">左邊</span> 得分</button>
-        <button class="btn R hidden" id="rBtn"><span class="nmR">右邊</span> 得分 ▶</button>
-      </div>
-      <div class="nav">
-        <button id="prevBtn">← 上一題</button>
-        <button id="skipBtn">都沒猜到，下一題 →</button>
-      </div>
-    </div>
-
-    <div id="result" class="result hidden"></div>
-  </section>
-</div>
+  <footer>看注音開頭，說出一個兩個字的詞！<span class="kb"><br>電腦可用 <kbd>←</kbd><kbd>→</kbd> 換題、<kbd>空白鍵</kbd> 看答案</span></footer>
+</main>
 
 <script>
-/* 題庫格式：答案:每個字的注音第一個符號（字數需一致） */
-const THEMES = [
-  { name: "水果", emoji: "🍎", c: "#e8573f", d:
-    "蘋果:ㄆㄍ,香蕉:ㄒㄐ,西瓜:ㄒㄍ,葡萄:ㄆㄊ,芒果:ㄇㄍ,鳳梨:ㄈㄌ,草莓:ㄘㄇ,橘子:ㄐㄗ,檸檬:ㄋㄇ,奇異果:ㄑㄧㄍ,榴槤:ㄌㄌ,芭樂:ㄅㄌ,荔枝:ㄌㄓ,龍眼:ㄌㄧ,櫻桃:ㄧㄊ,水蜜桃:ㄕㄇㄊ,哈密瓜:ㄏㄇㄍ,火龍果:ㄏㄌㄍ,柚子:ㄧㄗ,木瓜:ㄇㄍ" },
-  { name: "動物", emoji: "🐼", c: "#f2a93b", d:
-    "老虎:ㄌㄏ,獅子:ㄕㄗ,大象:ㄉㄒ,長頸鹿:ㄔㄐㄌ,熊貓:ㄒㄇ,袋鼠:ㄉㄕ,企鵝:ㄑㄜ,猴子:ㄏㄗ,兔子:ㄊㄗ,烏龜:ㄨㄍ,海豚:ㄏㄊ,鱷魚:ㄜㄩ,斑馬:ㄅㄇ,狐狸:ㄏㄌ,松鼠:ㄙㄕ,河馬:ㄏㄇ,孔雀:ㄎㄑ,無尾熊:ㄨㄨㄒ,刺蝟:ㄘㄨ,蝴蝶:ㄏㄉ" },
-  { name: "台灣小吃", emoji: "🧋", c: "#b4703f", d:
-    "珍珠奶茶:ㄓㄓㄋㄔ,臭豆腐:ㄔㄉㄈ,滷肉飯:ㄌㄖㄈ,蚵仔煎:ㄜㄗㄐ,牛肉麵:ㄋㄖㄇ,小籠包:ㄒㄌㄅ,雞排:ㄐㄆ,鹽酥雞:ㄧㄙㄐ,肉圓:ㄖㄩ,蔥油餅:ㄘㄧㄅ,擔仔麵:ㄉㄗㄇ,豆花:ㄉㄏ,米糕:ㄇㄍ,鳳梨酥:ㄈㄌㄙ,大腸包小腸:ㄉㄔㄅㄒㄔ,胡椒餅:ㄏㄐㄅ,麻糬:ㄇㄕ,愛玉:ㄞㄩ,燒仙草:ㄕㄒㄘ,蘿蔔糕:ㄌㄅㄍ" },
-  { name: "職業", emoji: "🧑‍⚕️", c: "#4a7fd6", d:
-    "醫生:ㄧㄕ,老師:ㄌㄕ,警察:ㄐㄔ,消防員:ㄒㄈㄩ,廚師:ㄔㄕ,護理師:ㄏㄌㄕ,律師:ㄌㄕ,工程師:ㄍㄔㄕ,司機:ㄙㄐ,農夫:ㄋㄈ,記者:ㄐㄓ,歌手:ㄍㄕ,演員:ㄧㄩ,畫家:ㄏㄐ,太空人:ㄊㄎㄖ,飛行員:ㄈㄒㄩ,郵差:ㄧㄔ,理髮師:ㄌㄈㄕ,魔術師:ㄇㄕㄕ,建築師:ㄐㄓㄕ" },
-  { name: "運動", emoji: "⚽", c: "#3fae72", d:
-    "籃球:ㄌㄑ,足球:ㄗㄑ,棒球:ㄅㄑ,排球:ㄆㄑ,網球:ㄨㄑ,桌球:ㄓㄑ,羽毛球:ㄩㄇㄑ,游泳:ㄧㄩ,跑步:ㄆㄅ,跳繩:ㄊㄕ,溜冰:ㄌㄅ,滑雪:ㄏㄒ,衝浪:ㄔㄌ,拳擊:ㄑㄐ,跆拳道:ㄊㄑㄉ,高爾夫球:ㄍㄦㄈㄑ,射箭:ㄕㄐ,騎腳踏車:ㄑㄐㄊㄔ,瑜珈:ㄩㄐ,保齡球:ㄅㄌㄑ" },
-  { name: "交通工具", emoji: "🚲", c: "#2f9fb3", d:
-    "汽車:ㄑㄔ,公車:ㄍㄔ,捷運:ㄐㄩ,火車:ㄏㄔ,高鐵:ㄍㄊ,飛機:ㄈㄐ,輪船:ㄌㄔ,機車:ㄐㄔ,腳踏車:ㄐㄊㄔ,計程車:ㄐㄔㄔ,救護車:ㄐㄏㄔ,消防車:ㄒㄈㄔ,直升機:ㄓㄕㄐ,潛水艇:ㄑㄕㄊ,熱氣球:ㄖㄑㄑ,火箭:ㄏㄐ,卡車:ㄎㄔ,纜車:ㄌㄔ,帆船:ㄈㄔ,滑板:ㄏㄅ" },
-  { name: "台灣地名", emoji: "🗺️", c: "#8a5cc9", d:
-    "台北:ㄊㄅ,台中:ㄊㄓ,台南:ㄊㄋ,高雄:ㄍㄒ,新竹:ㄒㄓ,基隆:ㄐㄌ,桃園:ㄊㄩ,苗栗:ㄇㄌ,彰化:ㄓㄏ,南投:ㄋㄊ,雲林:ㄩㄌ,嘉義:ㄐㄧ,屏東:ㄆㄉ,宜蘭:ㄧㄌ,花蓮:ㄏㄌ,台東:ㄊㄉ,澎湖:ㄆㄏ,金門:ㄐㄇ,馬祖:ㄇㄗ,墾丁:ㄎㄉ" },
-  { name: "日常用品", emoji: "🪥", c: "#d4578f", d:
-    "牙刷:ㄧㄕ,毛巾:ㄇㄐ,雨傘:ㄩㄙ,眼鏡:ㄧㄐ,手機:ㄕㄐ,鑰匙:ㄧㄕ,枕頭:ㄓㄊ,棉被:ㄇㄅ,剪刀:ㄐㄉ,鉛筆:ㄑㄅ,橡皮擦:ㄒㄆㄘ,吹風機:ㄔㄈㄐ,衛生紙:ㄨㄕㄓ,冰箱:ㄅㄒ,電視:ㄉㄕ,沙發:ㄕㄈ,時鐘:ㄕㄓ,拖鞋:ㄊㄒ,洗衣機:ㄒㄧㄐ,檯燈:ㄊㄉ" },
-  { name: "成語", emoji: "📜", c: "#c0463a", d:
-    "一石二鳥:ㄧㄕㄦㄋ,畫蛇添足:ㄏㄕㄊㄗ,對牛彈琴:ㄉㄋㄊㄑ,守株待兔:ㄕㄓㄉㄊ,井底之蛙:ㄐㄉㄓㄨ,亡羊補牢:ㄨㄧㄅㄌ,狐假虎威:ㄏㄐㄏㄨ,半途而廢:ㄅㄊㄦㄈ,一見鍾情:ㄧㄐㄓㄑ,三心二意:ㄙㄒㄦㄧ,馬到成功:ㄇㄉㄔㄍ,七上八下:ㄑㄕㄅㄒ,自言自語:ㄗㄧㄗㄩ,愚公移山:ㄩㄍㄧㄕ,杯弓蛇影:ㄅㄍㄕㄧ,開門見山:ㄎㄇㄐㄕ,入木三分:ㄖㄇㄙㄈ,雪中送炭:ㄒㄓㄙㄊ,津津有味:ㄐㄐㄧㄨ,千鈞一髮:ㄑㄐㄧㄈ" },
-  { name: "大自然", emoji: "🌈", c: "#5b8c3a", d:
-    "彩虹:ㄘㄏ,太陽:ㄊㄧ,月亮:ㄩㄌ,星星:ㄒㄒ,颱風:ㄊㄈ,閃電:ㄕㄉ,打雷:ㄉㄌ,下雨:ㄒㄩ,雪人:ㄒㄖ,沙漠:ㄕㄇ,森林:ㄙㄌ,瀑布:ㄆㄅ,火山:ㄏㄕ,海浪:ㄏㄌ,沙灘:ㄕㄊ,冰山:ㄅㄕ,地震:ㄉㄓ,雲朵:ㄩㄉ,極光:ㄐㄍ,流星:ㄌㄒ" },
-];
-THEMES.forEach(t => t.items = t.d.split(",").map(s => { const [a, z] = s.split(":"); return { a, z: [...z] }; }));
+/* 題庫：注音開頭:參考答案/其他也可以的答案 */
+const DATA = `
+ㄆㄍ:蘋果/排骨
+ㄒㄐ:香蕉/選舉/休假
+ㄒㄍ:西瓜/性格/香港
+ㄆㄊ:葡萄/普通/旁聽
+ㄇㄍ:芒果/美國/玫瑰
+ㄈㄌ:鳳梨/法律/福利
+ㄘㄇ:草莓/聰明
+ㄌㄏ:老虎/蘭花/靈魂
+ㄕㄗ:獅子/數字/柿子
+ㄉㄒ:大象/東西/地下
+ㄒㄇ:熊貓/小貓/西門
+ㄏㄗ:猴子/孩子/盒子
+ㄊㄗ:兔子/梯子/投資
+ㄨㄍ:烏龜/外國
+ㄏㄊ:海豚/回頭/黑糖
+ㄏㄉ:蝴蝶/活動/花朵
+ㄐㄆ:雞排/機票
+ㄉㄏ:豆花/電話/大海
+ㄇㄕ:麻糬/魔術/美食
+ㄧㄕ:醫生/意思/牙刷
+ㄌㄕ:老師/律師/歷史
+ㄐㄔ:警察/機車/機場
+ㄔㄕ:廚師/城市/出生
+ㄙㄐ:司機/三角
+ㄍㄕ:歌手/故事/高手
+ㄌㄑ:籃球/冷氣/力氣
+ㄗㄑ:足球/早起
+ㄅㄑ:棒球/抱歉
+ㄆㄅ:跑步/旁邊/皮包
+ㄏㄒ:滑雪/好笑/或許
+ㄑㄔ:汽車/清楚
+ㄍㄔ:公車/工廠/過程
+ㄏㄔ:火車/好吃/紅茶
+ㄈㄐ:飛機/放假/附近
+ㄐㄩ:捷運/教育
+ㄊㄅ:台北/特別/圖表
+ㄍㄒ:高雄/高興/感謝
+ㄐㄌ:基隆/距離/經理
+ㄇㄐ:毛巾/美金/面積
+ㄐㄉ:剪刀/雞蛋/經典
+ㄑㄅ:鉛筆/錢包/全部
+ㄅㄒ:冰箱/不行
+ㄉㄕ:電視/但是/讀書
+ㄕㄈ:沙發/師父/收費
+ㄊㄒ:拖鞋/同學/天下
+ㄊㄧ:太陽/同意/體育
+ㄩㄌ:月亮/原來/娛樂
+ㄒㄒ:星星/學校/消息
+ㄊㄈ:颱風/頭髮
+ㄕㄇ:沙漠/什麼/睡眠
+`.trim().split("\n").map(l => { const [z, a] = l.split(":"); return { z: [...z], a: a.split("/") }; });
 
+const COLORS = ["#e8573f", "#f0a030", "#3fae72", "#3b74d9", "#8a5cc9", "#d4578f", "#2f9fb3", "#b4703f"];
 const $ = id => document.getElementById(id);
-const store = {
-  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
-};
-
-let mode = store.get("zy-mode", "first");
-let theme, deck, idx, flipped, results;
-
-/* ---------- Home ---------- */
-function renderGrid() {
-  $("grid").innerHTML = THEMES.map((t, i) => `
-    <button class="theme" style="--c:${t.c};--i:${i}" data-i="${i}">
-      <span class="emo">${t.emoji}</span>
-      <span class="name">${t.name}</span>
-      <span class="meta"><span>${t.items.length} 題</span><i>›</i></span>
-    </button>`).join("");
-}
-
-/* ---------- Player names ---------- */
-const names = store.get("zy-names", { L: "左邊", R: "右邊" });
-const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-function paintNames() {
-  $("nL").textContent = names.L; $("nR").textContent = names.R;
-  document.querySelectorAll(".nmL").forEach(e => e.textContent = names.L);
-  document.querySelectorAll(".nmR").forEach(e => e.textContent = names.R);
-}
-["L", "R"].forEach(side => {
-  const el = $("n" + side);
-  el.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); el.blur(); } e.stopPropagation(); });
-  el.addEventListener("blur", () => {
-    const v = el.textContent.trim().slice(0, 8);
-    names[side] = v || (side === "L" ? "左邊" : "右邊");
-    store.set("zy-names", names); paintNames();
-  });
-});
-paintNames();
-$("grid").addEventListener("click", e => { const b = e.target.closest(".theme"); if (b) start(+b.dataset.i); });
-
-function setMode(m) {
-  mode = m; store.set("zy-mode", m);
-  const btns = [...$("seg").querySelectorAll("button")];
-  btns.forEach(b => b.classList.toggle("on", b.dataset.mode === m));
-  const on = btns.find(b => b.dataset.mode === m), pill = $("seg").querySelector(".pill");
-  pill.style.left = on.offsetLeft + "px"; pill.style.width = on.offsetWidth + "px";
-  renderGrid();
-}
-$("seg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setMode(b.dataset.mode); });
-window.addEventListener("resize", () => setMode(mode));
-
-/* ---------- Game ---------- */
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-function start(i) {
-  theme = THEMES[i];
-  document.documentElement.style.setProperty("--c", theme.c);
-  $("gName").textContent = `${theme.emoji} ${theme.name}`;
-  $("gMode").textContent = mode === "first" ? "單一開頭模式" : "整串開頭模式";
-  deck = shuffle(theme.items); idx = 0; results = [];
-  $("play").classList.remove("hidden"); $("result").classList.add("hidden");
-  document.body.classList.add("playing");
-  window.scrollTo(0, 0);
-  show(true);
-}
+let deck = shuffle(DATA), idx = 0;
+$("total").textContent = deck.length;
 
-function show(animate) {
+function render(dir = 1) {
   const q = deck[idx];
-  flipped = false; $("card").classList.remove("flipped");
-  const n = q.a.length;
-  const ts = n <= 2 ? 96 : n === 3 ? 84 : n === 4 ? 72 : 60;
-  const size = `min(${ts}px, ${Math.floor(78 / n)}vw)`;
-  $("tiles").style.setProperty("--ts", size);
-  $("tiles").innerHTML = q.z.map((s, i) =>
-    (mode === "all" || i === 0) ? `<div class="tile on" style="--i:${i}">${s}</div>` : `<div class="tile blank" style="--i:${i}">?</div>`
-  ).join("");
-  $("qno").textContent = `Q${String(idx + 1).padStart(2, "0")}`;
-  $("hintTag").textContent = `${n} 個字`;
-  // 背面延遲更新，避免翻回時偷看到下一題
-  setTimeout(() => {
-    $("answer").innerHTML = [...q.a].map((ch, i) => `<ruby>${ch}<rt>${q.z[i]}</rt></ruby>`).join("");
-  }, animate ? 0 : 320);
-  if (animate || true) { const c = $("card"); c.classList.remove("enter"); void c.offsetWidth; c.classList.add("enter"); }
-  $("prog").style.width = (idx / deck.length * 100) + "%";
-  $("sIdx").textContent = idx + 1; $("sTot").textContent = deck.length;
-  paintScore();
-  $("prevBtn").style.visibility = idx > 0 ? "visible" : "hidden";
-  setButtons();
+  const color = COLORS[idx % COLORS.length];
+  document.documentElement.style.setProperty("--c", color);
+  $("tiles").innerHTML = q.z.map(s => `<div class="tile">${s}</div>`).join("");
+  $("main").textContent = q.a[0];
+  $("alt").innerHTML = q.a.length > 1 ? "也可以：" + q.a.slice(1).map(w => `<span>${w}</span>`).join("") : "";
+  setOpen(false);
+  $("no").textContent = idx + 1;
+  $("prog").style.width = ((idx + 1) / deck.length * 100) + "%";
+  $("prev").disabled = idx === 0;
+  $("next").firstChild.textContent = idx === deck.length - 1 ? "重新開始" : "下一題";
+  const card = $("card");
+  card.style.setProperty("--dx", (dir * 30) + "px");
+  card.classList.remove("enter"); void card.offsetWidth; card.classList.add("enter");
 }
 
-const tally = () => ({ L: results.filter(r => r === "L").length, R: results.filter(r => r === "R").length });
-function paintScore(bumpSide) {
-  const s = tally();
-  $("pL").textContent = s.L; $("pR").textContent = s.R;
-  $("tL").classList.toggle("lead", s.L > s.R);
-  $("tR").classList.toggle("lead", s.R > s.L);
-  if (bumpSide) { const t = $("t" + bumpSide); t.classList.remove("bump"); void t.offsetWidth; t.classList.add("bump"); }
+function setOpen(open) {
+  $("reveal").classList.toggle("open", open);
+  $("peekText").textContent = open ? "收起答案" : "看參考答案";
 }
 
-function setButtons() {
-  $("flipBtn").classList.toggle("hidden", flipped);
-  $("lBtn").classList.toggle("hidden", !flipped);
-  $("rBtn").classList.toggle("hidden", !flipped);
+function go(step) {
+  if (step > 0 && idx === deck.length - 1) { deck = shuffle(DATA); idx = 0; return render(1); }
+  const n = idx + step;
+  if (n < 0 || n >= deck.length) return;
+  idx = n; render(step);
 }
 
-function flip() {
-  flipped = !flipped;
-  $("card").classList.toggle("flipped", flipped);
-  setButtons();
-}
-
-function answer(side) {
-  results[idx] = side;
-  if (side) paintScore(side);
-  if (idx < deck.length - 1) { idx++; setTimeout(() => show(false), side ? 180 : 0); } else setTimeout(finish, 250);
-}
-
-function finish() {
-  const s = tally(), total = deck.length;
-  $("prog").style.width = "100%";
-  const missed = deck.filter((_, i) => !results[i]);
-  const win = s.L === s.R ? null : s.L > s.R ? "L" : "R";
-  const head = win ? `${esc(names[win])} 獲勝！🏆` : "平手！🤝";
-  const sub = win ? `以 ${Math.max(s.L, s.R)} 比 ${Math.min(s.L, s.R)} 拿下「${theme.name}」` : `兩邊都拿下 ${s.L} 分，再來一局分勝負`;
-  $("play").classList.add("hidden");
-  const r = $("result"); r.classList.remove("hidden");
-  r.innerHTML = `
-    <div class="final">
-      <div class="side L ${win === "L" ? "win" : ""}"><div class="crown">${win === "L" ? "👑" : ""}</div><b>${s.L}</b><span>${esc(names.L)}</span></div>
-      <div class="colon">:</div>
-      <div class="side R ${win === "R" ? "win" : ""}"><div class="crown">${win === "R" ? "👑" : ""}</div><b>${s.R}</b><span>${esc(names.R)}</span></div>
-    </div>
-    <h2>${head}</h2>
-    <p>${sub}</p>
-    ${missed.length ? `<div class="mode-label" style="margin-bottom:10px">都沒猜到的</div><div class="miss">${missed.map(m => `<span>${m.a}</span>`).join("")}</div>` : ""}
-    <div class="actions">
-      <button class="btn no" id="homeBtn">換主題</button>
-      <button class="btn ok" id="againBtn" style="background:var(--c)">再玩一次</button>
-    </div>`;
-  $("homeBtn").onclick = goHome;
-  $("againBtn").onclick = () => start(THEMES.indexOf(theme));
-  if (win) confetti();
-}
-
-function confetti() {
-  const box = document.createElement("div"); box.className = "confetti";
-  const cols = ["#e8573f", "#f2a93b", "#3fae72", "#4a7fd6", "#d4578f", "#8a5cc9"];
-  for (let i = 0; i < 70; i++) {
-    const p = document.createElement("i");
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.background = cols[i % cols.length];
-    p.style.animationDuration = 1.8 + Math.random() * 1.8 + "s";
-    p.style.animationDelay = Math.random() * .6 + "s";
-    box.appendChild(p);
-  }
-  document.body.appendChild(box); setTimeout(() => box.remove(), 4500);
-}
-
-function goHome() { document.body.classList.remove("playing"); renderGrid(); setMode(mode); }
-
-$("card").addEventListener("click", flip);
-$("flipBtn").addEventListener("click", flip);
-$("lBtn").addEventListener("click", () => answer("L"));
-$("rBtn").addEventListener("click", () => answer("R"));
-$("skipBtn").addEventListener("click", () => answer(null));
-$("prevBtn").addEventListener("click", () => { if (idx > 0) { idx--; show(false); } });
-$("back").addEventListener("click", goHome);
-$("restart").addEventListener("click", () => start(THEMES.indexOf(theme)));
-
+$("peek").addEventListener("click", () => setOpen(!$("reveal").classList.contains("open")));
+$("prev").addEventListener("click", () => go(-1));
+$("next").addEventListener("click", () => go(1));
+$("shuffle").addEventListener("click", () => { deck = shuffle(DATA); idx = 0; render(1); });
 document.addEventListener("keydown", e => {
-  if (!document.body.classList.contains("playing") || $("play").classList.contains("hidden")) return;
-  if (document.activeElement?.isContentEditable) return;
-  if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
-  else if (flipped && e.key === "ArrowLeft") answer("L");
-  else if (flipped && e.key === "ArrowRight") answer("R");
-  else if (e.key === "Backspace" && idx > 0) { idx--; show(false); }
+  if (e.key === "ArrowRight") go(1);
+  else if (e.key === "ArrowLeft") go(-1);
+  else if (e.key === " ") { e.preventDefault(); setOpen(!$("reveal").classList.contains("open")); }
 });
 
-setMode(mode);
+/* 手機左右滑動換題 */
+let sx = null;
+$("card").addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, { passive: true });
+$("card").addEventListener("touchend", e => {
+  if (sx == null) return;
+  const dx = e.changedTouches[0].clientX - sx; sx = null;
+  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+});
+
+render(1);
 </script>
 </body>
 </html>
