@@ -116,7 +116,6 @@
   .card.idle .peek, .card.rolling .peek, .card.idle .ans, .card.rolling .ans { display: none !important; }
   .tile.q { color: var(--ink-soft); border-color: var(--line); border-style: dashed; background: var(--bg); box-shadow: none; }
   .tile.spin { animation: jiggle .14s linear infinite; color: color-mix(in srgb, var(--c) 55%, var(--paper)); }
-  .tile:nth-child(2).spin { animation-delay: -.07s; }
   .tile.land { animation: land .45s cubic-bezier(.3,1.8,.5,1); }
   @keyframes jiggle { 0%, 100% { translate: 0 -3px; } 50% { translate: 0 3px; } }
   @keyframes land { 0% { scale: 1.25; } 100% { scale: 1; } }
@@ -165,8 +164,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
     </button>
   </header>
-
-  <div class="count"><span>第 <b id="no">–</b> / <span id="total">50</span> 關</span><div class="bar"><div id="prog" style="width:0"></div></div></div>
 
   <section class="card idle" id="card">
     <div class="tiles" id="tiles"><div class="tile q">?</div><div class="tile q">?</div></div>
@@ -248,7 +245,6 @@ const $ = id => document.getElementById(id);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 let deck = shuffle(DATA), idx = -1, busy = false;
-$("total").textContent = deck.length;
 const SYMS = [..."ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩ"];
 const rand = a => a[Math.random() * a.length | 0];
 
@@ -265,7 +261,6 @@ function reset() {
   const card = $("card"); card.className = "card idle";
   $("tiles").innerHTML = `<div class="tile q">?</div><div class="tile q">?</div>`;
   $("status").textContent = "按「開始遊戲」隨機抽一題！";
-  $("no").textContent = "–"; $("prog").style.width = "0";
   setOpen(false); setGo("開始遊戲", false);
 }
 
@@ -279,13 +274,12 @@ function draw() {
   const card = $("card"); card.className = "card rolling";
   setOpen(false);
   $("status").innerHTML = `<span class="dots">隨機抽題中</span>`;
-  $("no").textContent = idx + 1;
-  $("prog").style.width = ((idx + 1) / deck.length * 100) + "%";
   setGo("抽題中…", true);
 
   $("tiles").innerHTML = `<div class="tile spin"></div><div class="tile spin"></div>`;
   const tiles = [...$("tiles").children];
-  const stops = [900 + Math.random() * 300, 1500 + Math.random() * 400];
+  const stop = 1100 + Math.random() * 400;
+  const stops = [stop, stop];
   const t0 = performance.now();
   const timer = setInterval(() => {
     const t = performance.now() - t0;
