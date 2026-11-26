@@ -110,8 +110,25 @@
   .ans .alt span { background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 99px; color: var(--ink); }
   @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.94); } }
 
+  /* ---------- Draw states ---------- */
+  .status { font-size: 16px; font-weight: 700; color: var(--ink-soft); display: none; text-align: center; }
+  .card.idle .status, .card.rolling .status { display: block; }
+  .card.idle .peek, .card.rolling .peek, .card.idle .ans, .card.rolling .ans { display: none !important; }
+  .tile.q { color: var(--ink-soft); border-color: var(--line); border-style: dashed; background: var(--bg); box-shadow: none; }
+  .tile.spin { animation: jiggle .14s linear infinite; color: color-mix(in srgb, var(--c) 55%, var(--paper)); }
+  .tile:nth-child(2).spin { animation-delay: -.07s; }
+  .tile.land { animation: land .45s cubic-bezier(.3,1.8,.5,1); }
+  @keyframes jiggle { 0%, 100% { translate: 0 -3px; } 50% { translate: 0 3px; } }
+  @keyframes land { 0% { scale: 1.25; } 100% { scale: 1; } }
+  .card.idle .tile.q { animation: breathe 2.4s ease-in-out infinite; }
+  .card.idle .tile.q:nth-child(2) { animation-delay: -1.2s; }
+  @keyframes breathe { 50% { translate: 0 -6px; } }
+  .dots::after { content: ""; animation: dots 1s steps(4) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "．"; } 50% { content: "．．"; } 75% { content: "．．．"; } }
+
   /* ---------- Nav ---------- */
-  .nav { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; }
+  .nav { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  #go { padding: 20px 12px; font-size: 19px; }
   .btn {
     border: 0; border-radius: 18px; padding: 17px 12px; font-weight: 900; font-size: 17px;
     display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 0 rgba(0,0,0,.14);
@@ -144,16 +161,17 @@
       </div>
       <h1>注音猜猜看</h1>
     </div>
-    <button class="icon-btn" id="shuffle" aria-label="重新洗牌" title="重新洗牌">
+    <button class="icon-btn" id="shuffle" aria-label="重新開始" title="重新開始">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
     </button>
   </header>
 
-  <div class="count"><span>第 <b id="no">1</b> / <span id="total">50</span> 題</span><div class="bar"><div id="prog"></div></div></div>
+  <div class="count"><span>第 <b id="no">–</b> / <span id="total">50</span> 關</span><div class="bar"><div id="prog" style="width:0"></div></div></div>
 
-  <section class="card" id="card">
-    <div class="tiles" id="tiles"></div>
+  <section class="card idle" id="card">
+    <div class="tiles" id="tiles"><div class="tile q">?</div><div class="tile q">?</div></div>
     <div class="reveal" id="reveal">
+      <div class="status" id="status">按「開始遊戲」隨機抽一題！</div>
       <button class="peek" id="peek">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
         <span id="peekText">看參考答案</span>
@@ -163,13 +181,11 @@
   </section>
 
   <div class="nav">
-    <button class="btn ghost" id="prev">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>上一題</button>
-    <button class="btn solid" id="next">下一題
+    <button class="btn solid" id="go"><span id="goText">開始遊戲</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
   </div>
 
-  <footer>看注音開頭，說出一個兩個字的詞！<span class="kb"><br>電腦可用 <kbd>←</kbd><kbd>→</kbd> 換題、<kbd>空白鍵</kbd> 看答案</span></footer>
+  <footer>看注音開頭，說出一個兩個字的詞！<span class="kb"><br>電腦可用 <kbd>Enter</kbd> 抽下一關、<kbd>空白鍵</kbd> 看答案</span></footer>
 </main>
 
 <script>
@@ -231,58 +247,76 @@ const COLORS = ["#e8573f", "#f0a030", "#3fae72", "#3b74d9", "#8a5cc9", "#d4578f"
 const $ = id => document.getElementById(id);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-let deck = shuffle(DATA), idx = 0;
+let deck = shuffle(DATA), idx = -1, busy = false;
 $("total").textContent = deck.length;
-
-function render(dir = 1) {
-  const q = deck[idx];
-  const color = COLORS[idx % COLORS.length];
-  document.documentElement.style.setProperty("--c", color);
-  $("tiles").innerHTML = q.z.map(s => `<div class="tile">${s}</div>`).join("");
-  $("main").textContent = q.a[0];
-  $("alt").innerHTML = q.a.length > 1 ? "也可以：" + q.a.slice(1).map(w => `<span>${w}</span>`).join("") : "";
-  setOpen(false);
-  $("no").textContent = idx + 1;
-  $("prog").style.width = ((idx + 1) / deck.length * 100) + "%";
-  $("prev").disabled = idx === 0;
-  $("next").firstChild.textContent = idx === deck.length - 1 ? "重新開始" : "下一題";
-  const card = $("card");
-  card.style.setProperty("--dx", (dir * 30) + "px");
-  card.classList.remove("enter"); void card.offsetWidth; card.classList.add("enter");
-}
+const SYMS = [..."ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩ"];
+const rand = a => a[Math.random() * a.length | 0];
 
 function setOpen(open) {
   $("reveal").classList.toggle("open", open);
   $("peekText").textContent = open ? "收起答案" : "看參考答案";
 }
 
-function go(step) {
-  if (step > 0 && idx === deck.length - 1) { deck = shuffle(DATA); idx = 0; return render(1); }
-  const n = idx + step;
-  if (n < 0 || n >= deck.length) return;
-  idx = n; render(step);
+function setGo(text, disabled) { $("goText").textContent = text; $("go").disabled = disabled; }
+
+function reset() {
+  deck = shuffle(DATA); idx = -1; busy = false;
+  document.documentElement.style.setProperty("--c", COLORS[0]);
+  const card = $("card"); card.className = "card idle";
+  $("tiles").innerHTML = `<div class="tile q">?</div><div class="tile q">?</div>`;
+  $("status").textContent = "按「開始遊戲」隨機抽一題！";
+  $("no").textContent = "–"; $("prog").style.width = "0";
+  setOpen(false); setGo("開始遊戲", false);
+}
+
+/* 抽題：先轉動注音（假裝隨機），再依序停在題目上 */
+function draw() {
+  if (busy) return;
+  if (idx >= deck.length - 1) { reset(); return; }
+  busy = true; idx++;
+  const q = deck[idx];
+  document.documentElement.style.setProperty("--c", COLORS[idx % COLORS.length]);
+  const card = $("card"); card.className = "card rolling";
+  setOpen(false);
+  $("status").innerHTML = `<span class="dots">隨機抽題中</span>`;
+  $("no").textContent = idx + 1;
+  $("prog").style.width = ((idx + 1) / deck.length * 100) + "%";
+  setGo("抽題中…", true);
+
+  $("tiles").innerHTML = `<div class="tile spin"></div><div class="tile spin"></div>`;
+  const tiles = [...$("tiles").children];
+  const stops = [900 + Math.random() * 300, 1500 + Math.random() * 400];
+  const t0 = performance.now();
+  const timer = setInterval(() => {
+    const t = performance.now() - t0;
+    tiles.forEach((el, i) => {
+      if (!el.classList.contains("spin")) return;
+      if (t >= stops[i]) { el.textContent = q.z[i]; el.classList.remove("spin"); el.classList.add("land"); }
+      else el.textContent = rand(SYMS);
+    });
+    if (tiles.every(el => !el.classList.contains("spin"))) {
+      clearInterval(timer);
+      setTimeout(() => {
+        card.className = "card";
+        $("main").textContent = q.a[0];
+        $("alt").innerHTML = q.a.length > 1 ? "也可以：" + q.a.slice(1).map(w => `<span>${w}</span>`).join("") : "";
+        const last = idx === deck.length - 1;
+        setGo(last ? "全部完成！重新開始" : "下一關", false);
+        busy = false;
+      }, 350);
+    }
+  }, 70);
 }
 
 $("peek").addEventListener("click", () => setOpen(!$("reveal").classList.contains("open")));
-$("prev").addEventListener("click", () => go(-1));
-$("next").addEventListener("click", () => go(1));
-$("shuffle").addEventListener("click", () => { deck = shuffle(DATA); idx = 0; render(1); });
+$("go").addEventListener("click", draw);
+$("shuffle").addEventListener("click", reset);
 document.addEventListener("keydown", e => {
-  if (e.key === "ArrowRight") go(1);
-  else if (e.key === "ArrowLeft") go(-1);
-  else if (e.key === " ") { e.preventDefault(); setOpen(!$("reveal").classList.contains("open")); }
+  if (e.key === "Enter" || e.key === "ArrowRight") { e.preventDefault(); draw(); }
+  else if (e.key === " " && !$("card").classList.contains("idle") && !busy) { e.preventDefault(); setOpen(!$("reveal").classList.contains("open")); }
 });
 
-/* 手機左右滑動換題 */
-let sx = null;
-$("card").addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, { passive: true });
-$("card").addEventListener("touchend", e => {
-  if (sx == null) return;
-  const dx = e.changedTouches[0].clientX - sx; sx = null;
-  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
-});
-
-render(1);
+reset();
 </script>
 </body>
 </html>
